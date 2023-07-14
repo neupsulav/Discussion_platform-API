@@ -1,2 +1,31 @@
 const express = require("express");
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config();
+const connectDB = require("./db/connect");
+const errorHandlerMiddleware = require("./middlewares/ErrorHandlerMiddleware");
+const noRoute = require("./middlewares/noRoute");
+const authRouter = require("./routers/auth");
+
+//routes
+app.use(express.json());
+app.use("/api/user", authRouter);
+
+//middlewares
+
+//error handler middleware
+app.use(errorHandlerMiddleware);
+
+//no route
+app.use(noRoute);
+
+//listen
+const listen = async () => {
+  await connectDB(process.env.MONGO_URI);
+
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is listening to port no ${process.env.PORT}`);
+  });
+};
+
+listen();
