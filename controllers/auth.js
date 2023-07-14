@@ -10,7 +10,20 @@ const register = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("Please fill all the fields properly", 400));
   }
 
-  const newUser = await User.create(req.body);
+  //for multer image upload
+  const file = req.file;
+  if (!file) return next(new ErrorHandler("Image file not received", 400));
+
+  const fileName = file.filename;
+  const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
+
+  const newUser = await User.create({
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password,
+    image: `${basePath}${fileName}`, // "http://localhost:3000/public/upload/image-2323232"
+  });
   newUser.save();
 
   if (!newUser) {
