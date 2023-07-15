@@ -47,7 +47,10 @@ const createComment = catchAsync(async (req, res, next) => {
 
 //get all posts
 const getPost = catchAsync(async (req, res, next) => {
-  const posts = await Post.find({}).populate("comment").sort({ createdAt: -1 });
+  const posts = await Post.find({})
+    .populate("comment")
+    .populate("createdBy")
+    .sort({ createdAt: -1 });
 
   if (!posts) {
     return next(new ErrorHandler("Something went wrong", 400));
@@ -73,9 +76,45 @@ const getSinglePost = catchAsync(async (req, res, next) => {
   res.status(200).send(post);
 });
 
+//update post
+const updatePost = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+
+  const updatePost = await Post.findByIdAndUpdate(
+    {
+      _id: id,
+    },
+    req.body,
+    { new: true }
+  );
+
+  if (!updatePost) {
+    return next(new ErrorHandler("Something went wrong", 400));
+  }
+
+  res.status(200).json({ msg: "Post Updated successfully" });
+});
+
+//delete post
+const deletePost = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+
+  const deletePost = await Post.findByIdAndRemove({
+    _id: id,
+  });
+
+  if (!deletePost) {
+    return next(new ErrorHandler("Something went wrong", 400));
+  }
+
+  res.status(200).json({ success: true, msg: "Post deleted" });
+});
+
 module.exports = {
   createPost,
   createComment,
   getPost,
   getSinglePost,
+  updatePost,
+  deletePost,
 };
