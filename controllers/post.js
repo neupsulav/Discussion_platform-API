@@ -12,6 +12,7 @@ const createPost = catchAsync(async (req, res, next) => {
     image: req.user.image,
     heading: req.body.heading,
     description: req.user.description,
+    createdBy: req.user.userId,
   });
   post.save();
 
@@ -55,8 +56,26 @@ const getPost = catchAsync(async (req, res, next) => {
   res.status(200).send(posts);
 });
 
+//get a post
+const getSinglePost = catchAsync(async (req, res, next) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return next(new ErrorHandler("Invalid Post ID", 400));
+  }
+
+  const id = req.params.id;
+
+  const post = await Post.findOne({ _id: id }).populate("comment");
+
+  if (!post) {
+    return next(new ErrorHandler(`No post with ID ${id} found`, 404));
+  }
+
+  res.status(200).send(post);
+});
+
 module.exports = {
   createPost,
   createComment,
   getPost,
+  getSinglePost,
 };
