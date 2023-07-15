@@ -6,10 +6,12 @@ const connectDB = require("./db/connect");
 const errorHandlerMiddleware = require("./middlewares/ErrorHandlerMiddleware");
 const noRoute = require("./middlewares/noRoute");
 const authRouter = require("./routers/auth");
+const postRouter = require("./routers/post");
 
 //routes
 app.use(express.json());
 app.use("/api/user", authRouter);
+app.use("/api/post", postRouter);
 
 //middlewares
 

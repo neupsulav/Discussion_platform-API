@@ -54,6 +54,7 @@ userSchema.methods.getJwt = async function () {
       userId: this._id,
       username: this.username,
       name: this.name,
+      image: this.image,
     },
     process.env.SECRET_KEY,
     {
