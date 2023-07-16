@@ -6,6 +6,17 @@ const { default: mongoose } = require("mongoose");
 
 //create a post
 const createPost = catchAsync(async (req, res, next) => {
+  // multer
+  const files = req.files;
+  let imagesPaths = [];
+  const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
+
+  if (files) {
+    files.map((file) => {
+      imagesPaths.push(`${basePath}${file.filename}`);
+    });
+  }
+
   const post = await Post.create({
     name: req.user.name,
     username: req.user.username,
@@ -13,6 +24,7 @@ const createPost = catchAsync(async (req, res, next) => {
     heading: req.body.heading,
     description: req.user.description,
     createdBy: req.user.userId,
+    postImages: imagesPaths,
   });
   post.save();
 
@@ -47,10 +59,7 @@ const createComment = catchAsync(async (req, res, next) => {
 
 //get all posts
 const getPost = catchAsync(async (req, res, next) => {
-  const posts = await Post.find({})
-    .populate("comment")
-    .populate("createdBy")
-    .sort({ createdAt: -1 });
+  const posts = await Post.find({}).populate("comment").sort({ createdAt: -1 });
 
   if (!posts) {
     return next(new ErrorHandler("Something went wrong", 400));

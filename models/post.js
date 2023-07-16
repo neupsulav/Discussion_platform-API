@@ -17,6 +17,11 @@ const postSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  postImages: [
+    {
+      type: String,
+    },
+  ],
   comment: [
     {
       type: mongoose.Schema.Types.ObjectId,
