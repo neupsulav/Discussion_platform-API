@@ -57,6 +57,33 @@ const createComment = catchAsync(async (req, res, next) => {
   res.status(201).json({ success: true });
 });
 
+//like post
+const likePost = catchAsync(async (req, res, next) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return next(new ErrorHandler("Invalid Post ID", 400));
+  }
+  const id = req.params.id;
+
+  //preventing a user from liking post multiple times
+  const isAlreadyLiked = await Post.findOne({
+    _id: id,
+    likes: req.user.userId,
+  });
+
+  if (!isAlreadyLiked) {
+    const likes = await Post.findByIdAndUpdate(
+      { _id: id },
+      { $push: { likes: req.user.userId } },
+      {
+        new: true,
+      }
+    );
+    res.status(200).json({ success: true });
+  } else {
+    res.status(400).json({ msg: "Post already liked" });
+  }
+});
+
 //get all posts
 const getPost = catchAsync(async (req, res, next) => {
   const posts = await Post.find({}).populate("comment").sort({ createdAt: -1 });
@@ -126,4 +153,5 @@ module.exports = {
   getSinglePost,
   updatePost,
   deletePost,
+  likePost,
 };

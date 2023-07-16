@@ -11,6 +11,7 @@ const {
   getSinglePost,
   updatePost,
   deletePost,
+  likePost,
 } = require("../controllers/post");
 
 // multer for user image uploads
@@ -51,7 +52,9 @@ router.get("/", getPost);
 
 router.get("/:id", getSinglePost);
 
-router.post("/createComment/:id", authentication, createComment);
+router.patch("/createcomment/:id", authentication, createComment);
+
+router.patch("/like/:id", authentication, likePost);
 
 router.patch("/update/:id", authentication, validateWOwner, updatePost);
 
