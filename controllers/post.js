@@ -78,7 +78,7 @@ const likePost = catchAsync(async (req, res, next) => {
         new: true,
       }
     );
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, likesCount: likes.likes.length });
   } else {
     const likes = await Post.findByIdAndUpdate(
       { _id: id },
@@ -87,7 +87,9 @@ const likePost = catchAsync(async (req, res, next) => {
         new: true,
       }
     );
-    res.status(400).json({ msg: "Post already liked" });
+    res
+      .status(400)
+      .json({ msg: "Post already liked", likesCount: likes.likes.length });
   }
 });
 
