@@ -57,7 +57,7 @@ const createComment = catchAsync(async (req, res, next) => {
   res.status(201).json({ success: true });
 });
 
-//like post
+//like and unlike post
 const likePost = catchAsync(async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     return next(new ErrorHandler("Invalid Post ID", 400));
@@ -80,6 +80,13 @@ const likePost = catchAsync(async (req, res, next) => {
     );
     res.status(200).json({ success: true });
   } else {
+    const likes = await Post.findByIdAndUpdate(
+      { _id: id },
+      { $pull: { likes: req.user.userId } },
+      {
+        new: true,
+      }
+    );
     res.status(400).json({ msg: "Post already liked" });
   }
 });
