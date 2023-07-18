@@ -48,9 +48,9 @@ router.post(
   createPost
 );
 
-router.get("/", getPost);
+router.get("/", authentication, getPost);
 
-router.get("/:id", getSinglePost);
+router.get("/:id", authentication, getSinglePost);
 
 router.patch("/createcomment/:id", authentication, createComment);
 

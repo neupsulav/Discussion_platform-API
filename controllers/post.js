@@ -3,6 +3,7 @@ const catchAsync = require("../middlewares/catchAsync");
 const ErrorHandler = require("../middlewares/errorHandler");
 const CommentItem = require("../models/commentItem");
 const { default: mongoose } = require("mongoose");
+const User = require("../models/user");
 
 //create a post
 const createPost = catchAsync(async (req, res, next) => {
@@ -92,7 +93,9 @@ const likePost = catchAsync(async (req, res, next) => {
 
 //get all posts
 const getPost = catchAsync(async (req, res, next) => {
-  const posts = await Post.find({})
+  const thisUser = await User.findOne({ _id: req.user.userId });
+
+  const posts = await Post.find({ createdBy: thisUser.following })
     .populate("comment")
     .populate({ path: "createdBy", select: "_id name username image" })
     .sort({ createdAt: -1 });
