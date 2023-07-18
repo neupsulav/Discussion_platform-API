@@ -30,6 +30,20 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 //hash the password

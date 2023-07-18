@@ -8,12 +8,16 @@ const noRoute = require("./middlewares/noRoute");
 const authRouter = require("./routers/auth");
 const postRouter = require("./routers/post");
 const profileRouter = require("./routers/profile");
+const followRouter = require("./routers/follow");
+const usersRouter = require("./routers/user");
 
 //routes
 app.use(express.json());
-app.use("/api/user", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/post", postRouter);
 app.use("/api/profile", profileRouter);
+app.use("/api/", followRouter);
+app.use("/api/user", usersRouter);
 
 //middlewares
 
