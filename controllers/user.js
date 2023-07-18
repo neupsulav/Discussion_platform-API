@@ -5,7 +5,10 @@ const { default: mongoose } = require("mongoose");
 
 //get all users
 const getUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find({}).sort({ createdAt: -1 });
+  const users = await User.find({})
+    .sort({ createdAt: -1 })
+    .populate({ path: "following", select: "_id name username image" })
+    .populate({ path: "followers", select: "_id name username image" });
 
   if (!users) {
     return next(new ErrorHandler("Something went wrong"), 400);

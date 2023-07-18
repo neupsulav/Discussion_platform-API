@@ -18,9 +18,6 @@ const createPost = catchAsync(async (req, res, next) => {
   }
 
   const post = await Post.create({
-    name: req.user.name,
-    username: req.user.username,
-    image: req.user.image,
     heading: req.body.heading,
     description: req.user.description,
     createdBy: req.user.userId,
@@ -95,7 +92,10 @@ const likePost = catchAsync(async (req, res, next) => {
 
 //get all posts
 const getPost = catchAsync(async (req, res, next) => {
-  const posts = await Post.find({}).populate("comment").sort({ createdAt: -1 });
+  const posts = await Post.find({})
+    .populate("comment")
+    .populate({ path: "createdBy", select: "_id name username image" })
+    .sort({ createdAt: -1 });
 
   if (!posts) {
     return next(new ErrorHandler("Something went wrong", 400));
