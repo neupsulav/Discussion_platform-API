@@ -11,8 +11,8 @@ const sendVerificationMail = catchAsync(async (name, email, userid) => {
     secure: false,
     requireTLS: true,
     auth: {
-      user: "neupsulav@gmail.com",
-      pass: "kyybbbainhzebjge",
+      user: process.env.USER,
+      pass: process.env.PASS,
     },
   });
 
