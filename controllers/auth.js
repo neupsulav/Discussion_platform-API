@@ -1,6 +1,44 @@
 const User = require("../models/user");
 const catchAsync = require("../middlewares/catchAsync");
 const ErrorHandler = require("../middlewares/errorHandler");
+const nodemailer = require("nodemailer");
+
+//function for mail
+const sendVerificationMail = catchAsync(async (name, email, userid) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: "neupsulav@gmail.com",
+      pass: "kyybbbainhzebjge",
+    },
+  });
+
+  const mailOptions = {
+    from: "neupsulav@gmail.com",
+    to: email,
+    subject: "For verification",
+    html: `<p>Hi ${name}</p>, please click <a href=''http://localhost:3000/verify?id=${userid}>here</a> to verify your account`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email has been sent:", info.response);
+    }
+  });
+});
+
+const emailVerification = catchAsync(async (req, res, next) => {
+  const updateInfo = await User.findByIdAndUpdate(
+    { _id: req.query.id },
+    { $set: { isVerified: true } }
+  );
+  res.status(200).json({ msg: "Email verified" });
+});
 
 //register new user
 const register = catchAsync(async (req, res, next) => {
@@ -29,6 +67,9 @@ const register = catchAsync(async (req, res, next) => {
   if (!newUser) {
     return next(new ErrorHandler("User couldn't be registered", 500));
   }
+
+  //verification mail
+  sendVerificationMail(req.body.name, req.body.email, newUser._id);
 
   res.status(201).json({ success: true, msg: "New user created successfully" });
 });
@@ -65,4 +106,5 @@ const login = catchAsync(async (req, res, next) => {
 module.exports = {
   register,
   login,
+  emailVerification,
 };

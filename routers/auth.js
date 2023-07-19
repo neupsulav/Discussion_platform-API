@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
-const { register, login } = require("../controllers/auth");
+const { register, login, emailVerification } = require("../controllers/auth");
 
 // multer for user image uploads
 const FILE_TYPE_MAP = {
@@ -34,5 +34,7 @@ const uploadOptions = multer({ storage: storage });
 router.post("/register", uploadOptions.single("image"), register);
 
 router.route("/login").post(login);
+
+router.get("/verify", emailVerification);
 
 module.exports = router;
