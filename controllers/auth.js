@@ -84,6 +84,13 @@ const login = catchAsync(async (req, res, next) => {
     );
   }
 
+  // email verification
+  const isVerifiedUser = await User.findOne({ email: email });
+
+  if (!isVerifiedUser.isVerified) {
+    return next(new ErrorHandler("Email not verified", 400));
+  }
+
   const checkUser = await User.findOne({ email: email });
 
   if (!checkUser) {

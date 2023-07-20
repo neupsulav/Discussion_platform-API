@@ -8,7 +8,8 @@ const getUsers = catchAsync(async (req, res, next) => {
   const users = await User.find({})
     .sort({ createdAt: -1 })
     .populate({ path: "following", select: "_id name username image" })
-    .populate({ path: "followers", select: "_id name username image" });
+    .populate({ path: "followers", select: "_id name username image" })
+    .select("-password");
 
   if (!users) {
     return next(new ErrorHandler("Something went wrong"), 400);
